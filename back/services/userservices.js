@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const uri = process.env.uri;
-const jwtpass = process.env.uri;
+const jwtpass = process.env.jwtpass;
 const jsonwebtoken = require("jsonwebtoken");
 
 const UserSchema = require("../models/userModel");
@@ -61,7 +61,7 @@ const login = async (req, res) => {
     }
 
     const a = await userFound.verifyPassword(password);
-    //NOTE - falata deixar isto de forma limpara para enviar para o front
+    //NOTE - falta deixar isto de forma limpa para enviar para o front
     if (a) {
       res.send(
         jsonwebtoken.sign(
