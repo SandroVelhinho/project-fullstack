@@ -82,4 +82,21 @@ const login = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  const { currentUser, newUser } = req.body;
+  //TODO - criar validação de newUser, antes de fazer o findOne and update
+  try {
+    await mongoose.connect(uri);
+
+    const user = await UserSchema.findOneAndUpdate(
+      { email: currentUser.email },
+      newUser
+    );
+  } catch (e) {
+    console.log(e);
+  } finally {
+    mongoose.connection.close();
+  }
+};
+
 module.exports = { signin, validateRequestBodyMiddleware, login };
