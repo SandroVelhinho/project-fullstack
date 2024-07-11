@@ -60,9 +60,9 @@ const login = async (req, res) => {
       res.status(400).send("user not found");
     }
 
-    const a = await userFound.verifyPassword(password);
+    const passValidator = await userFound.verifyPassword(password);
     //NOTE - falta deixar isto de forma limpa para enviar para o front
-    if (a) {
+    if (passValidator) {
       const response = {
         token: jsonwebtoken.sign(
           {
@@ -73,7 +73,7 @@ const login = async (req, res) => {
           jwtpass,
           { expiresIn: "1h" }
         ),
-        login: true,
+        userInfo: userFound,
       };
       res.send(response);
     }

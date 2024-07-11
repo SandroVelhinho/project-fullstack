@@ -54,31 +54,16 @@ export function Login({
     }, 3000);
   }
 
-  const findUserByEmail = async (email) => {
-    try {
-      const q = query(collection(db, "users"), where("email", "==", email));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userData = querySnapshot.docs[0].data();
-        setFirebaseName(userData.name);
-        setFirebaseLname(userData.lname);
-      } else {
-        setFirebaseName("");
-        setFirebaseLname("");
-        console.log("Usuário não encontrado.");
-      }
-    } catch (error) {
-      console.error("Erro ao procurar usuário:", error);
-    }
-  };
+ 
   const loginBackend = async () => {
     let user = { email: email, password: pass };
     try {
-
-      const response = await axios.post("http://localhost:3001/user/login", user);
+      const response = await axios.post(
+        "http://localhost:3001/user/login",
+        user
+      );
       localStorage.setItem("token", response.data.token);
-      return response.data.login;
+      return response.data.userInfo;
     } catch (error) {
       console.log(error);
       return false;
@@ -88,33 +73,23 @@ export function Login({
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    let validation = await loginBackend();
+    let userInfo = await loginBackend();
 
-    if (validation) {
+    if (userInfo) {
       setSuccess(true);
       setLoading(false);
       navigate(-1);
+      setFirebaseName(userInfo.name);
+      setFirebaseLname(userInfo.lastname);
     } else {
       setError(true);
       setLoading(false);
+      setFirebaseName("");
+      setFirebaseLname("");
     }
   };
 
-  /*const onSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    await signInWithEmailAndPassword(auth, email, pass)
-      .then(() => {
-        setSuccess(true);
-        setLoading(false);
-        findUserByEmail(email);
-        navigate(-1);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
-  }; */
+ 
 
   return (
     <div style={{ marginTop: "4%" }}>
