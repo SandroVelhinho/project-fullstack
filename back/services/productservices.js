@@ -30,25 +30,28 @@ const AddNewProduct = async (req, res) => {
     //NOTE - voltar para verificar o response do api
     const result = jwt.verify(body.token, jwtpass);
     console.log(result);
-    let permissions;
+    let permissions = false;
+
     for (let i = 0; i < result.userPermissions.length; i++) {
-      if ((result.userPermissions[i] = "ADMIN")) {
-        return (permissions = true);
+      if (result.userPermissions[i] === "ADMIN") {
+        permissions = true;
       }
     }
+
     if (!permissions) {
-      res.status(404).send("not an admin");
+      res.status(500).send("not an admin");
     }
-    const newProduct = new productSchema(body.newproduct);
+    const newProduct = await new productSchema(body.newproduct);
     await newProduct.save();
+    console.log(newProduct);
     if (newProduct) {
       res.status(200).send(true);
     } else {
-      res.status(404).send(false);
+      res.status(500).send(false);
     }
   } catch (e) {
     console.log("AddnewProduct catched: ", e);
-    res.status(404).send(e.message);
+    res.status(500).send(e.message);
   } finally {
     mongoose.connection.close();
   }

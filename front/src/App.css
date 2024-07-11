@@ -1,0 +1,10 @@
+.App {
+  display: flex;
+  align-items: center;
+  margin: 3px;
+  
+
+}
+.font {
+  font-family: "Lato", sans-serif;
+}
