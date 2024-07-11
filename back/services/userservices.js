@@ -63,8 +63,8 @@ const login = async (req, res) => {
     const a = await userFound.verifyPassword(password);
     //NOTE - falta deixar isto de forma limpa para enviar para o front
     if (a) {
-      res.send(
-        jsonwebtoken.sign(
+      const response = {
+        token: jsonwebtoken.sign(
           {
             userId: userFound._id,
             userEmail: userFound.email,
@@ -72,8 +72,10 @@ const login = async (req, res) => {
           },
           jwtpass,
           { expiresIn: "1h" }
-        )
-      );
+        ),
+        login: true,
+      };
+      res.send(response);
     }
   } catch (e) {
     console.log("login catched : ", e);

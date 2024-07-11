@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Paper,
   Divider,
@@ -21,6 +21,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import axios from "axios";
 
 export function Login({
   setFirebaseName,
@@ -34,6 +35,7 @@ export function Login({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [effectTarget, setEffectTarget] = useState(0);
   const navigate = useNavigate();
 
   if (success === true) {
@@ -70,8 +72,35 @@ export function Login({
       console.error("Erro ao procurar usuário:", error);
     }
   };
+  const loginBackend = async () => {
+    let user = { email: email, password: pass };
+    try {
+
+      const response = await axios.post("http://localhost:3001/user/login", user);
+      localStorage.setItem("token", response.data.token);
+      return response.data.login;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
 
   const onSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    let validation = await loginBackend();
+
+    if (validation) {
+      setSuccess(true);
+      setLoading(false);
+      navigate(-1);
+    } else {
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  /*const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     await signInWithEmailAndPassword(auth, email, pass)
@@ -85,7 +114,7 @@ export function Login({
         setError(true);
         setLoading(false);
       });
-  };
+  }; */
 
   return (
     <div style={{ marginTop: "4%" }}>
