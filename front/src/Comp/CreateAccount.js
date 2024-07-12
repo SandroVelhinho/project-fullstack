@@ -16,8 +16,9 @@ import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import CheckIcon from "@mui/icons-material/Check";
 import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
-
-export function CreateAccount({setSucessSingin}) {
+import axios from "axios";
+import isEmail from "validator/lib/isEmail";
+export function CreateAccount({ setSucessSingin }) {
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -33,7 +34,9 @@ export function CreateAccount({setSucessSingin}) {
   const navigate = useNavigate();
   const usersRef = collection(db, "users");
   const [loading, setLoading] = useState(false);
-
+  const [emailAlert, setEmailAlert] = useState(false);
+  const [duplicatedEmail, setDuplaicatedEmail] = useState(false);
+ //TODO - substituir todos estes tratamentos de error por apenas um ou dois, e la em baixo tbm
   if (passAlert === true) {
     setTimeout(() => {
       setPassAlert(false);
@@ -54,6 +57,33 @@ export function CreateAccount({setSucessSingin}) {
       setAgeAlert(false);
     }, 3000);
   }
+  const createUserBack = async () => {
+    console.log("ativou");
+    const newUser = {
+      name: name.name,
+      lastname: lname.lname,
+      email: user.email,
+      password: user.password,
+      age: age.age,
+    };
+    try {
+      const res = await axios.post(
+        "http://localhost:3001/user/signin",
+        newUser
+      );
+      console.log("res.data : ", res.data);
+
+      if (res.data === true) {
+        navigate("/login");
+        setSucessSingin(true);
+      }
+    } catch (e) {
+      if (e.response.data.error === "Duplicated email") {
+        setDuplaicatedEmail(true);
+      }
+      console.log("catched", e.response.data);
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -62,13 +92,16 @@ export function CreateAccount({setSucessSingin}) {
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/;
 
     if (
+      isEmail(user.email) &&
       user.password === user.confirmpassword &&
       name.name !== "" &&
       lname.lname !== "" &&
       age.age !== "" &&
       passwordRegex.test(user.password)
     ) {
-      await addDoc(usersRef, {
+      await createUserBack();
+
+      /*await addDoc(usersRef, {
         name: name.name,
         lname: lname.lname,
         email: user.email,
@@ -81,7 +114,7 @@ export function CreateAccount({setSucessSingin}) {
           navigate("/login");
           setSucessSingin(true);
         })
-        .catch(() => console.log("Something wrong"));
+        .catch(() => console.log("Something wrong")); */
     } else {
       if (user.password !== user.confirmpassword) {
         setPassAlert(true);
@@ -91,6 +124,8 @@ export function CreateAccount({setSucessSingin}) {
         setAgeAlert(true);
       } else if (!passwordRegex.test(user.password)) {
         setPassRegex(true);
+      } else if (!isEmail(user.email)) {
+        setEmailAlert(true);
       }
     }
   };
@@ -228,6 +263,26 @@ export function CreateAccount({setSucessSingin}) {
         </Paper>
       </form>
       <Stack spacing={2}>
+        {emailAlert && (
+          <Alert
+            severity="error"
+            onClose={() => {}}
+            style={{ width: "30%", bottom: "2%", position: "absolute" }}
+            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
+          >
+            You need to write a valid email.
+          </Alert>
+        )}
+        {duplicatedEmail && (
+          <Alert
+            severity="error"
+            onClose={() => {}}
+            style={{ width: "30%", bottom: "2%", position: "absolute" }}
+            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
+          >
+            This email is already in use.
+          </Alert>
+        )}
         {nameAlert && (
           <Alert
             severity="error"

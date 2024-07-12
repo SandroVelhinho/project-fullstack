@@ -18,6 +18,11 @@ const UserSchema = new mongoose.Schema({
   },
   permissions: { type: Array, default: [] },
   isactive: { type: Boolean, default: true },
+  age: {
+    type: Number,
+    required: [true, "User must have a name"],
+    min: [18, "User must have at least 18 years old"],
+  },
 });
 
 UserSchema.methods = {

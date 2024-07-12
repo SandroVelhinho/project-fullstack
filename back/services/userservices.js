@@ -23,6 +23,11 @@ const validateRequestBodyMiddleware = (req, res, next) => {
     errors.push("Password is not valid");
   }
 
+  if (!body.name || !body.lastname) {
+    body.name = false;
+    errors.push("User must have a complete name");
+  }
+
   if (errors.length > 0) {
     throw new Error(errors);
   }
@@ -34,7 +39,7 @@ const signin = async (req, res) => {
   let { body } = req;
   try {
     await mongoose.connect(uri);
-    const newUser = new UserSchema(body);
+    const newUser = await new UserSchema(body);
     await newUser.save();
 
     console.log(newUser);
@@ -42,8 +47,11 @@ const signin = async (req, res) => {
       res.status(200).send(true);
     }
   } catch (e) {
-    console.log("sign-in function catched: ", e);
-    res.status(400).send({ error: e.message, body: body });
+    if (e.message.indexOf('duplicate key')) {
+      res.status(500).send({ error: 'Duplicated email', body: body });
+    }
+    console.log("sign-in function catched: ", e.message.includes);
+    res.status(500).send({ error: e.message, body: body });
   } finally {
     mongoose.connection.close();
   }
