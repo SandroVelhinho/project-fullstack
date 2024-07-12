@@ -13,14 +13,21 @@ const validateRequestBodyMiddleware = (req, res, next) => {
   //TODO - melhorar e adicionar validação do resto do usuario
   const { body } = req;
   const errors = [];
+  const passwordRegex =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/;
   if (!isEmail(body.email)) {
     body.email = false;
     errors.push("Email is not valid");
   }
-
-  if (body.password.length < 6) {
+  //FIXME - problema na validação de pass
+  if (
+    passwordRegex.test(body.password) === false ||
+    passwordRegex.test(body.confirmpaswword) === false
+  ) {
     body.password = false;
-    errors.push("Password is not valid");
+    errors.push("Your password need to have Numbers, Letters and Characters");
+  } else if (body.password !== body.confirmpaswword) {
+    errors.push("You need to confirm your password");
   }
 
   if (!body.name || !body.lastname) {
@@ -28,8 +35,12 @@ const validateRequestBodyMiddleware = (req, res, next) => {
     errors.push("User must have a complete name");
   }
 
+  if (body.age < 18) {
+    errors.push("User must have at least 18 years old");
+  }
+
   if (errors.length > 0) {
-    throw new Error(errors);
+    body.errors = errors;
   }
 
   next();
@@ -39,7 +50,16 @@ const signin = async (req, res) => {
   let { body } = req;
   try {
     await mongoose.connect(uri);
-    const newUser = await new UserSchema(body);
+    if (body.errors.length) {
+      return res.status(500).send(body.errors);
+    }
+    const newUser = await new UserSchema({
+      name: body.name,
+      lastname: body.lastname,
+      email: body.email,
+      password: body.password,
+      age: body.age,
+    });
     await newUser.save();
 
     console.log(newUser);
@@ -47,11 +67,13 @@ const signin = async (req, res) => {
       res.status(200).send(true);
     }
   } catch (e) {
-    if (e.message.indexOf('duplicate key')) {
-      res.status(500).send({ error: 'Duplicated email', body: body });
+    if (e.message.indexOf("duplicate key")) {
+      body.errors.push("Email already in use");
+
+      return res.status(500).send(body.errors);
     }
-    console.log("sign-in function catched: ", e.message.includes);
-    res.status(500).send({ error: e.message, body: body });
+    console.log("sign-in function catched: ", e.message);
+    res.status(500).send({ error: e.message });
   } finally {
     mongoose.connection.close();
   }

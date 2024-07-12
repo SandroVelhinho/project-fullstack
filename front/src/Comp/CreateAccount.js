@@ -17,60 +17,47 @@ import { db } from "../firebase";
 import CheckIcon from "@mui/icons-material/Check";
 import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
 import axios from "axios";
-import isEmail from "validator/lib/isEmail";
+import isEmail from "validator";
 export function CreateAccount({ setSucessSingin }) {
   const [user, setUser] = useState({
     email: "",
     password: "",
     confirmpassword: "",
+    name: "",
+    lastname: "",
+    age: "",
   });
-  const [name, setName] = useState({ name: "", verify: false });
-  const [lname, setLname] = useState({ lname: "", verify: false });
-  const [age, setAge] = useState({ age: "", verify: false });
-  const [passAlert, setPassAlert] = useState(false);
-  const [nameAlert, setNameAlert] = useState(false);
-  const [ageAlert, setAgeAlert] = useState(false);
-  const [passRegex, setPassRegex] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorStringArray, setErrorStringArray] = useState([]);
+
   const navigate = useNavigate();
-  const usersRef = collection(db, "users");
+
   const [loading, setLoading] = useState(false);
-  const [emailAlert, setEmailAlert] = useState(false);
-  const [duplicatedEmail, setDuplaicatedEmail] = useState(false);
- //TODO - substituir todos estes tratamentos de error por apenas um ou dois, e la em baixo tbm
-  if (passAlert === true) {
+
+  //TODO - substituir todos estes tratamentos de error por apenas um ou dois, e la em baixo tbm
+  if (errorStringArray.length > 0) {
     setTimeout(() => {
-      setPassAlert(false);
+      setError(true);
+    }, 500);
+  }
+  if (error) {
+    setTimeout(() => {
+      setError(false);
+      setErrorStringArray([]);
     }, 3000);
   }
-  if (passRegex === true) {
-    setTimeout(() => {
-      setPassRegex(false);
-    }, 3000);
-  }
-  if (nameAlert === true) {
-    setTimeout(() => {
-      setNameAlert(false);
-    }, 3000);
-  }
-  if (ageAlert === true) {
-    setTimeout(() => {
-      setAgeAlert(false);
-    }, 3000);
-  }
+
   const createUserBack = async () => {
-    console.log("ativou");
-    const newUser = {
-      name: name.name,
-      lastname: lname.lname,
+    const body = {
+      name: user.name,
+      lastname: user.lastname,
       email: user.email,
       password: user.password,
-      age: age.age,
+      confirmpassword: user.confirmpassword,
+      age: user.age,
     };
     try {
-      const res = await axios.post(
-        "http://localhost:3001/user/signin",
-        newUser
-      );
+      const res = await axios.post("http://localhost:3001/user/signin", body);
       console.log("res.data : ", res.data);
 
       if (res.data === true) {
@@ -78,9 +65,8 @@ export function CreateAccount({ setSucessSingin }) {
         setSucessSingin(true);
       }
     } catch (e) {
-      if (e.response.data.error === "Duplicated email") {
-        setDuplaicatedEmail(true);
-      }
+      setErrorStringArray(e.response.data);
+
       console.log("catched", e.response.data);
     }
   };
@@ -88,46 +74,7 @@ export function CreateAccount({ setSucessSingin }) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const passwordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/;
-
-    if (
-      isEmail(user.email) &&
-      user.password === user.confirmpassword &&
-      name.name !== "" &&
-      lname.lname !== "" &&
-      age.age !== "" &&
-      passwordRegex.test(user.password)
-    ) {
-      await createUserBack();
-
-      /*await addDoc(usersRef, {
-        name: name.name,
-        lname: lname.lname,
-        email: user.email,
-      })
-        .then((resp) => console.log(resp))
-        .catch(console.error);
-
-      await createUserWithEmailAndPassword(auth, user.email, user.password)
-        .then(() => {
-          navigate("/login");
-          setSucessSingin(true);
-        })
-        .catch(() => console.log("Something wrong")); */
-    } else {
-      if (user.password !== user.confirmpassword) {
-        setPassAlert(true);
-      } else if (name.name === "" || lname.lname === "") {
-        setNameAlert(true);
-      } else if (age.age === "") {
-        setAgeAlert(true);
-      } else if (!passwordRegex.test(user.password)) {
-        setPassRegex(true);
-      } else if (!isEmail(user.email)) {
-        setEmailAlert(true);
-      }
-    }
+    await createUserBack();
   };
 
   return (
@@ -166,7 +113,7 @@ export function CreateAccount({ setSucessSingin }) {
                   width: "50%",
                 }}
                 onChange={(e) =>
-                  setName({ name: e.target.value, verify: true })
+                  setUser({ name: e.target.value, verify: true })
                 }
               />
             </Stack>
@@ -201,9 +148,7 @@ export function CreateAccount({ setSucessSingin }) {
                   marginRight: "4%",
                   width: "50%",
                 }}
-                onChange={(e) =>
-                  setLname({ lname: e.target.value, verify: true })
-                }
+                onChange={(e) => setUser({ ...user, lastname: e.target.value })}
               />
             </Stack>
           </div>
@@ -242,7 +187,7 @@ export function CreateAccount({ setSucessSingin }) {
                 }}
                 type="number"
                 inputProps={{ min: 18, max: 120 }}
-                onChange={(e) => setAge({ age: e.target.value, verify: true })}
+                onChange={(e) => setUser({ ...user, age: e.target.value })}
               />
             </Stack>
           </div>
@@ -263,66 +208,18 @@ export function CreateAccount({ setSucessSingin }) {
         </Paper>
       </form>
       <Stack spacing={2}>
-        {emailAlert && (
-          <Alert
-            severity="error"
-            onClose={() => {}}
-            style={{ width: "30%", bottom: "2%", position: "absolute" }}
-            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
-          >
-            You need to write a valid email.
-          </Alert>
-        )}
-        {duplicatedEmail && (
-          <Alert
-            severity="error"
-            onClose={() => {}}
-            style={{ width: "30%", bottom: "2%", position: "absolute" }}
-            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
-          >
-            This email is already in use.
-          </Alert>
-        )}
-        {nameAlert && (
-          <Alert
-            severity="error"
-            onClose={() => {}}
-            style={{ width: "30%", bottom: "2%", position: "absolute" }}
-            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
-          >
-            You need to write your full name.
-          </Alert>
-        )}
-        {ageAlert && (
-          <Alert
-            severity="error"
-            onClose={() => {}}
-            style={{ width: "30%", bottom: "2%", position: "absolute" }}
-            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
-          >
-            You need to write your age.
-          </Alert>
-        )}
-        {passAlert && (
-          <Alert
-            severity="error"
-            onClose={() => {}}
-            style={{ width: "30%", bottom: "2%", position: "absolute" }}
-            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
-          >
-            You need to confirm your password.
-          </Alert>
-        )}
-        {passRegex && (
-          <Alert
-            severity="error"
-            onClose={() => {}}
-            style={{ width: "30%", bottom: "2%", position: "absolute" }}
-            icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
-          >
-            Your password need to have "Numbers, Letters and Characters"
-          </Alert>
-        )}
+        {error &&
+          errorStringArray.map((a) => (
+            <Alert
+              key={a}
+              severity="error"
+              onClose={() => {}}
+              style={{ width: "30%", bottom: "3%", position: "absolute" }}
+              icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
+            >
+              {a}
+            </Alert>
+          ))}
       </Stack>
       <Backdrop open={loading}>
         <CircularProgress
