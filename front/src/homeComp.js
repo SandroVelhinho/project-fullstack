@@ -4,7 +4,7 @@ import { Login } from "./Comp/Login";
 import { Header } from "./Comp/headerComp";
 import "./App.css";
 import { CssBaseline, Container, Divider } from "@mui/material";
-import { ProductContainer } from "./Comp/productDiv";
+import { ProductContainer } from "./Comp/productContainer";
 import { FilterList } from "./Comp/filterList";
 import { useState, useContext } from "react";
 import { Routes, Route } from "react-router-dom";

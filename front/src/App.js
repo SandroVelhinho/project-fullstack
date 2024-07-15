@@ -4,7 +4,7 @@ import { Login } from "./Comp/Login";
 import { Header } from "./Comp/headerComp";
 import "./App.css";
 import { CssBaseline, Container, Divider } from "@mui/material";
-import { ProductContainer } from "./Comp/productDiv";
+import { ProductContainer } from "./Comp/productContainer";
 import { FilterList } from "./Comp/filterList";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -48,7 +48,7 @@ function App() {
           path="/create-account"
           element={<CreateAccount setSucessSingin={setSucessSingin} />}
         />
-        <Route path="/cart" element={<CartComp cartIds={cartIds}/>}></Route>
+        <Route path="/cart" element={<CartComp cartIds={cartIds} />}></Route>
         <Route
           path="/login"
           element={
