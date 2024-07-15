@@ -10,17 +10,17 @@ import { useState, useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 
 export function HomeComp({ setCartIds, cartIds }) {
-  const [state, setState] = useState("");
+  const [filtro, setFiltro] = useState("");
 
   return (
     <div>
       <div style={{ float: "left", marginTop: "10%", position: "fixed" }}>
-        <FilterList setState={setState} />
+        <FilterList setState={setFiltro} />
       </div>
 
       <Container fixed style={{ marginTop: "2%" }}>
         <ProductContainer
-          filtro={state}
+          filtro={filtro}
           setCartIds={setCartIds}
           cartIds={cartIds}
         />

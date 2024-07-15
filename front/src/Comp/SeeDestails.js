@@ -23,10 +23,6 @@ export function SeeDetails({ firebaseName, setLoginFirstAlert }) {
     return <div style={{ marginTop: "15%" }}>Product not found.</div>;
   }
 
-  if (firebaseName) {
-    console.log(firebaseName);
-  }
-
   const loginVerify = () => {
     if (firebaseName) {
       navigate(`/checkout/${product.id}`);
@@ -116,11 +112,13 @@ export function SeeDetails({ firebaseName, setLoginFirstAlert }) {
                     spacing={2}
                     divider={<Divider orientation="vertical" flexItem />}
                   >
-                    <div style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignContent: "center",
-                    }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignContent: "center",
+                      }}
+                    >
                       {" "}
                       <b>{product.preço}$ </b>{" "}
                     </div>
