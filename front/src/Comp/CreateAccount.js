@@ -44,27 +44,32 @@ export function CreateAccount({ setSucessSingin }) {
     setTimeout(() => {
       setError(false);
       setErrorStringArray([]);
-    }, 3000);
+    }, 5000);
   }
 
   const createUserBack = async () => {
+    setErrorStringArray([]);
+    setLoading(true);
     const body = {
       name: user.name,
       lastname: user.lastname,
       email: user.email,
-      password: user.password,
-      confirmpassword: user.confirmpassword,
+      password: String(user.password),
+      confirmpassword: String(user.confirmpassword),
       age: user.age,
     };
+
     try {
       const res = await axios.post("http://localhost:3001/user/signin", body);
       console.log("res.data : ", res.data);
 
       if (res.data === true) {
+        setLoading(false);
         navigate("/login");
         setSucessSingin(true);
       }
     } catch (e) {
+      setLoading(false);
       setErrorStringArray(e.response.data);
 
       console.log("catched", e.response.data);
@@ -113,7 +118,7 @@ export function CreateAccount({ setSucessSingin }) {
                   width: "50%",
                 }}
                 onChange={(e) =>
-                  setUser({ name: e.target.value, verify: true })
+                  setUser({ ...user, name: e.target.value, verify: true })
                 }
               />
             </Stack>
@@ -214,7 +219,7 @@ export function CreateAccount({ setSucessSingin }) {
               key={a}
               severity="error"
               onClose={() => {}}
-              style={{ width: "30%", bottom: "3%", position: "absolute" }}
+              style={{ width: "30%", bottom: "3%", position: "relative" }}
               icon={<GppMaybeOutlinedIcon fontSize="inherit" />}
             >
               {a}

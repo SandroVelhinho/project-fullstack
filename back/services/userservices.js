@@ -19,14 +19,14 @@ const validateRequestBodyMiddleware = (req, res, next) => {
     body.email = false;
     errors.push("Email is not valid");
   }
-  //FIXME - problema na validação de pass
+
   if (
-    passwordRegex.test(body.password) === false ||
-    passwordRegex.test(body.confirmpaswword) === false
+    !passwordRegex.test(body.password) ||
+    !passwordRegex.test(body.confirmpassword)
   ) {
-    body.password = false;
     errors.push("Your password need to have Numbers, Letters and Characters");
-  } else if (body.password !== body.confirmpaswword) {
+  }
+  if (body.password !== body.confirmpassword) {
     errors.push("You need to confirm your password");
   }
 
@@ -50,9 +50,12 @@ const signin = async (req, res) => {
   let { body } = req;
   try {
     await mongoose.connect(uri);
-    if (body.errors.length) {
-      return res.status(500).send(body.errors);
+    if (body.errors) {
+      if (body.errors.length) {
+        return res.status(500).send(body.errors);
+      }
     }
+
     const newUser = await new UserSchema({
       name: body.name,
       lastname: body.lastname,
@@ -67,10 +70,9 @@ const signin = async (req, res) => {
       res.status(200).send(true);
     }
   } catch (e) {
-    if (e.message.indexOf("duplicate key")) {
-      body.errors.push("Email already in use");
-
-      return res.status(500).send(body.errors);
+    console.log(e);
+    if (e.message.indexOf("duplicate key") > 0) {
+      return res.status(500).send(["Email already in use"]);
     }
     console.log("sign-in function catched: ", e.message);
     res.status(500).send({ error: e.message });
