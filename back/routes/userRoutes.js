@@ -5,6 +5,7 @@ const {
   signin,
   validateRequestBodyMiddleware,
   login,
+  adminVerification,
 } = require("../services/userservices");
 
 userRouter.post(
@@ -32,6 +33,13 @@ userRouter.post("/login", async (req, res) => {
     await login(req, res);
   } catch (e) {
     console.log(e.message);
+  }
+});
+userRouter.post("/isadmin", async (req, res) => {
+  try {
+    await adminVerification(req, res);
+  } catch (e) {
+    console.log("isadmin catched: ", e);
   }
 });
 

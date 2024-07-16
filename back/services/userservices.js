@@ -133,4 +133,19 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { signin, validateRequestBodyMiddleware, login };
+const adminVerification = async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const decodeToken = jsonwebtoken.verify(token, jwtpass);
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+module.exports = {
+  signin,
+  validateRequestBodyMiddleware,
+  login,
+  adminVerification,
+};

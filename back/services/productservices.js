@@ -14,6 +14,7 @@ const getProducts = async (req, res) => {
     const query = {
       ...(category && { category }),
     };
+    console.log(query)
 
     res.status(200).send(await productSchema.find(query));
   } catch (e) {
