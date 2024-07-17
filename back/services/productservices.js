@@ -14,13 +14,28 @@ const getProducts = async (req, res) => {
     const query = {
       ...(category && { category }),
     };
-    console.log(query)
+    console.log(query);
 
     res.status(200).send(await productSchema.find(query));
   } catch (e) {
     console.log(e);
   } finally {
     await mongoose.connection.close();
+  }
+};
+
+const removeProduct = async (req, res) => {
+  const { productId } = req.body;
+  try {
+    await productSchema.findByIdAndDelete(productId, function (err, docs) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Deleted User : ", docs);
+      }
+    });
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -58,4 +73,4 @@ const AddNewProduct = async (req, res) => {
   }
 };
 
-module.exports = { AddNewProduct, getProducts };
+module.exports = { AddNewProduct, getProducts, removeProduct };

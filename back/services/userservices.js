@@ -110,7 +110,8 @@ const login = async (req, res) => {
       res.send(response);
     }
   } catch (e) {
-    console.log("login catched : ", e);
+    console.log("login catched : ", e.message);
+    return res.status(500).send(e.message);
   } finally {
     mongoose.connection.close();
   }
@@ -138,7 +139,17 @@ const adminVerification = async (req, res) => {
 
   try {
     const decodeToken = jsonwebtoken.verify(token, jwtpass);
+    console.log(decodeToken);
+    if (decodeToken) {
+      for (let permission of decodeToken.userPermissions) {
+        if (permission === "ADMIN") {
+          return res.send(true);
+        }
+      }
+      return res.send(false);
+    }
   } catch (e) {
+    res.status(500).send(e.message);
     console.log(e.message);
   }
 };

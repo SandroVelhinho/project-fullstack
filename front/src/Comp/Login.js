@@ -34,6 +34,7 @@ export function Login({
   const [pass, setPass] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [effectTarget, setEffectTarget] = useState(0);
   const navigate = useNavigate();
@@ -54,7 +55,6 @@ export function Login({
     }, 3000);
   }
 
- 
   const loginBackend = async () => {
     let user = { email: email, password: pass };
     try {
@@ -88,8 +88,6 @@ export function Login({
       setFirebaseLname("");
     }
   };
-
- 
 
   return (
     <div style={{ marginTop: "4%" }}>

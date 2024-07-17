@@ -24,11 +24,15 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
     const isAdmin = async () => {
       try {
         const localStorageToken = localStorage.getItem("token");
-        //NOTE - continuar a fazer a parte de admin
+
         const response = await axios.post(
           "http://localhost:3001/user/isadmin",
           { token: localStorageToken }
         );
+        if (response) {
+          console.log(response.data);
+          setIsAdmin(response.data);
+        }
       } catch (e) {
         console.log("front end cathed : ", e);
       }
@@ -36,8 +40,19 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
     isAdmin();
   }, []);
 
+  const deleteProduct = async (id) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/product/delete",
+        id
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    console.log("filtro changed : ", filtro);
     const getProductsApi = async () => {
       try {
         const response = await axios.post(
@@ -47,7 +62,6 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
 
         if (Array.isArray(response.data)) {
           setProducts(response.data);
-          console.log(products);
         } else {
           console.log("response.data is not an array: ", response.data);
         }
@@ -81,6 +95,9 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
                     elevation={15}
                     style={{ height: "100%", position: "relative" }}
                   >
+                    {" "}
+                    //NOTE - fazer um bom front end nisto
+                    {isAdmin && <div>x</div>}
                     <Box
                       style={{
                         margin: "5px",
