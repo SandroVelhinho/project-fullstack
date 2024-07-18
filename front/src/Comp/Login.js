@@ -1,6 +1,4 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Paper,
   Divider,
@@ -14,13 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
 import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+
 import axios from "axios";
 
 export function Login({
@@ -34,9 +26,9 @@ export function Login({
   const [pass, setPass] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+
   const [loading, setLoading] = useState(false);
-  const [effectTarget, setEffectTarget] = useState(0);
+
   const navigate = useNavigate();
 
   if (success === true) {
@@ -62,7 +54,7 @@ export function Login({
         "http://localhost:3001/user/login",
         user
       );
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token423412345763456765", response.data.token);
       return response.data.userInfo;
     } catch (error) {
       console.log(error);
@@ -78,7 +70,7 @@ export function Login({
     if (userInfo) {
       setSuccess(true);
       setLoading(false);
-      navigate(-1);
+      navigate("/");
       setFirebaseName(userInfo.name);
       setFirebaseLname(userInfo.lastname);
     } else {

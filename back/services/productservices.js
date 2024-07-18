@@ -23,19 +23,41 @@ const getProducts = async (req, res) => {
     await mongoose.connection.close();
   }
 };
+const getAProduct = async (req, res) => {
+  const { id } = req.body;
+  try {
+    await mongoose.connect(uri);
+
+    const productFound = await productSchema.find({ _id: id });
+    if (productFound) {
+      res.send(productFound[0]);
+    } 
+  } catch (e) {
+    res.status(500).send("product not found");
+  } finally {
+    await mongoose.connection.close();
+  }
+};
 
 const removeProduct = async (req, res) => {
-  const { productId } = req.body;
+  const { prodID } = req.body;
+  console.log("prodID : ", prodID);
+
   try {
-    await productSchema.findByIdAndDelete(productId, function (err, docs) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send("Deleted User : ", docs);
-      }
-    });
+    await mongoose.connect(uri);
+    const deletion = await productSchema.findByIdAndDelete(prodID);
+    if (deletion) {
+      res.send({
+        message: `Product ${deletion.name} with id: ${deletion._id}, was removed `,
+        bollean: true,
+      });
+    } else {
+      res.status(500).send({ message: "something went wrong", bollean: false });
+    }
   } catch (e) {
     console.log(e);
+  } finally {
+    await mongoose.connection.close();
   }
 };
 
@@ -73,4 +95,4 @@ const AddNewProduct = async (req, res) => {
   }
 };
 
-module.exports = { AddNewProduct, getProducts, removeProduct };
+module.exports = { getAProduct, AddNewProduct, getProducts, removeProduct };

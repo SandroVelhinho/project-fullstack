@@ -4,26 +4,27 @@ import {
   Divider,
   Stack,
   Box,
-  Chip,
   Button,
   Backdrop,
   CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { RemoveProductModal } from "./RemoveProductModal";
 import axios from "axios";
 
-export function ProductContainer({ filtro, setCartIds, cartIds }) {
+export function ProductContainer({ filtro, setCartIds, cartIds, setRefresh }) {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [productsTrigger, setProductsTrigger] = useState(false);
+
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const isAdmin = async () => {
       try {
-        const localStorageToken = localStorage.getItem("token");
+        const localStorageToken = localStorage.getItem(
+          "token423412345763456765"
+        );
 
         const response = await axios.post(
           "http://localhost:3001/user/isadmin",
@@ -39,18 +40,6 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
     };
     isAdmin();
   }, []);
-
-  const deleteProduct = async (id) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/product/delete",
-        id
-      );
-      console.log(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   useEffect(() => {
     const getProductsApi = async () => {
@@ -72,14 +61,6 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
     getProductsApi();
   }, [filtro]);
 
-  useEffect(() => {
-    if (products.length > 0) {
-      setProductsTrigger(true);
-    } else {
-      setProductsTrigger(false);
-    }
-  }, [products]);
-
   return (
     <div style={{ marginLeft: "10%", marginRight: "10%" }}>
       <h2 style={{ marginTop: "5%", textAlign: "center" }}>Home</h2>
@@ -95,9 +76,12 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
                     elevation={15}
                     style={{ height: "100%", position: "relative" }}
                   >
-                    {" "}
-                    //NOTE - fazer um bom front end nisto
-                    {isAdmin && <div>x</div>}
+                    {isAdmin && (
+                      <RemoveProductModal
+                        _id={prod._id}
+                        setRefresh={setRefresh}
+                      />
+                    )}
                     <Box
                       style={{
                         margin: "5px",
@@ -172,7 +156,7 @@ export function ProductContainer({ filtro, setCartIds, cartIds }) {
               );
             })
         ) : (
-          <Backdrop>
+          <Backdrop open={true}>
             <CircularProgress
               color="inherit"
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

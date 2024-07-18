@@ -6,10 +6,15 @@ const {
   AddNewProduct,
   getProducts,
   removeProduct,
+  getAProduct,
 } = require("../services/productservices");
 
 productRouter.post("/", async (req, res) => {
   await AddNewProduct(req, res).catch((e) => console.log(e));
+});
+
+productRouter.post("/getaproduct", async (req, res) => {
+  await getAProduct(req, res).catch((e) => console.log(e));
 });
 
 productRouter.post("/delete", async (req, res) => {

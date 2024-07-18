@@ -1,9 +1,9 @@
 import { AppBar, Button, Stack, IconButton, Badge } from "@mui/material";
-import { Route, Router, Routes, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
-import { Login } from "./Login";
+
 import { useEffect, useState } from "react";
 
 export function Header({
@@ -73,6 +73,8 @@ export function Header({
                 <IconButton
                   onClick={() => {
                     setFirebaseName("");
+                    localStorage.removeItem("token423412345763456765");
+                    navigate("/login");
                   }}
                 >
                   <LogoutIcon style={{ color: "white" }} />

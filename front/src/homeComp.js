@@ -1,16 +1,12 @@
-import { db, auth } from "./firebase";
-import { CreateAccount } from "./Comp/CreateAccount";
-import { Login } from "./Comp/Login";
-import { Header } from "./Comp/headerComp";
 import "./App.css";
-import { CssBaseline, Container, Divider } from "@mui/material";
+import { Container } from "@mui/material";
 import { ProductContainer } from "./Comp/productContainer";
 import { FilterList } from "./Comp/filterList";
-import { useState, useContext } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 
 export function HomeComp({ setCartIds, cartIds }) {
   const [filtro, setFiltro] = useState("");
+  const [refresh, setRefresh] = useState(1);
 
   return (
     <div>
@@ -23,6 +19,8 @@ export function HomeComp({ setCartIds, cartIds }) {
           filtro={filtro}
           setCartIds={setCartIds}
           cartIds={cartIds}
+          setRefresh={setRefresh}
+          key={refresh}
         />
       </Container>
     </div>
