@@ -41,7 +41,7 @@ export function SeeDetails({ firebaseName, setLoginFirstAlert }) {
 
   const loginVerify = () => {
     if (firebaseName) {
-      navigate(`/checkout/${product.id}`);
+      navigate(`/checkout/${product._id}`);
     } else {
       setLoginFirstAlert(true);
       navigate("/login");

@@ -13,11 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { RemoveProductModal } from "./RemoveProductModal";
 import axios from "axios";
 
-export function ProductContainer({ filtro, setCartIds, cartIds, setRefresh }) {
+export function ProductContainer({ filtro, setCartIds, cartIds, setRefresh, isAdmin, setIsAdmin }) {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  
 
   useEffect(() => {
     const isAdmin = async () => {

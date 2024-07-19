@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { products } from "../products";
+
 import {
   Grid,
   Box,
@@ -15,9 +15,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-export function CardComp({ setValidationError }) {
+export function CardComp({ setValidationError, product }) {
   const { id } = useParams();
-  const product = products.find((prod) => prod.id === id);
+  
   const navigate = useNavigate();
   const [cardFrom, setCardForm] = useState({
     form1: "",
@@ -28,7 +28,7 @@ export function CardComp({ setValidationError }) {
 
   const onSubmit = () => {
     if (cardFrom.form1 && cardFrom.form2 && cardFrom.form3 && cardFrom.form4) {
-      navigate(`/final/${product.id}`);
+      navigate(`/final/${product._id}`);
     } else {
       setValidationError(true);
     }

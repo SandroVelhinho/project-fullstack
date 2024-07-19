@@ -4,7 +4,7 @@ import { ProductContainer } from "./Comp/productContainer";
 import { FilterList } from "./Comp/filterList";
 import { useState } from "react";
 
-export function HomeComp({ setCartIds, cartIds }) {
+export function HomeComp({ setCartIds, cartIds, isAdmin, setIsAdmin }) {
   const [filtro, setFiltro] = useState("");
   const [refresh, setRefresh] = useState(1);
 
@@ -21,6 +21,8 @@ export function HomeComp({ setCartIds, cartIds }) {
           cartIds={cartIds}
           setRefresh={setRefresh}
           key={refresh}
+          isAdmin={isAdmin}
+          setIsAdmin={setIsAdmin}
         />
       </Container>
     </div>

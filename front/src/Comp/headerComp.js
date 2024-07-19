@@ -2,8 +2,7 @@ import { AppBar, Button, Stack, IconButton, Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-
-
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 export function Header({
@@ -11,9 +10,34 @@ export function Header({
   firebaseLname,
   setFirebaseName,
   cartIds,
+  isAdmin,
+  setIsAdmin,
 }) {
   const navigate = useNavigate();
   const [amount, setAmount] = useState(0);
+
+  useEffect(() => {
+    const isAdmin = async () => {
+      try {
+        const localStorageToken = localStorage.getItem(
+          "token423412345763456765"
+        );
+
+        const response = await axios.post(
+          "http://localhost:3001/user/isadmin",
+          { token: localStorageToken }
+        );
+        if (response) {
+          console.log(response.data);
+          setIsAdmin(response.data);
+        }
+      } catch (e) {
+        console.log("front end cathed : ", e);
+      }
+    };
+    isAdmin();
+  }, []);
+
   useEffect(() => {
     console.log(firebaseName);
   }, [firebaseName, firebaseLname]);
@@ -55,6 +79,16 @@ export function Header({
                     />
                   </IconButton>
                 </Badge>
+                {isAdmin && (
+                  <Button
+                    variant="text"
+                    style={{ color: "white" }}
+                    onClick={() => {}}
+                  >
+                    Add-Product
+                  </Button>
+                )}
+
                 <Button
                   variant="text"
                   style={{ color: "white" }}

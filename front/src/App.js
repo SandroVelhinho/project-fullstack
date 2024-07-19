@@ -1,11 +1,8 @@
-import { db, auth } from "./firebase";
 import { CreateAccount } from "./Comp/CreateAccount";
 import { Login } from "./Comp/Login";
 import { Header } from "./Comp/headerComp";
 import "./App.css";
-import { CssBaseline, Container, Divider } from "@mui/material";
-import { ProductContainer } from "./Comp/productContainer";
-import { FilterList } from "./Comp/filterList";
+
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HomeComp } from "./homeComp";
@@ -15,6 +12,7 @@ import { FinalComp } from "./Comp/FinalComp";
 import { UpdateUserDetails } from "./Comp/UpdateUSerDetails";
 import { CartComp } from "./Comp/CartComp";
 
+
 function App() {
   const [firebaseName, setFirebaseName] = useState("");
   const [firebaseLname, setFirebaseLname] = useState("");
@@ -22,6 +20,7 @@ function App() {
   const [loginFirstAlert, setLoginFirstAlert] = useState(false);
   const [sucessSingin, setSucessSingin] = useState(false);
   const [cartIds, setCartIds] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   if (loginFirstAlert === true) {
     setTimeout(() => {
       setLoginFirstAlert(false);
@@ -36,13 +35,22 @@ function App() {
           firebaseLname={firebaseLname}
           setFirebaseName={setFirebaseName}
           cartIds={cartIds}
+          isAdmin={isAdmin}
+          setIsAdmin={setIsAdmin}
         />
       </div>
 
       <Routes>
         <Route
           path="/"
-          element={<HomeComp setCartIds={setCartIds} cartIds={cartIds} />}
+          element={
+            <HomeComp
+              setCartIds={setCartIds}
+              cartIds={cartIds}
+              isAdmin={isAdmin}
+              setIsAdmin={setIsAdmin}
+            />
+          }
         />
         <Route
           path="/create-account"
