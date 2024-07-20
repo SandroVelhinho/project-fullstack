@@ -1,6 +1,5 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { auth } from "../firebase";
+
 import {
   Paper,
   Divider,
@@ -12,12 +11,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs, addDoc } from "firebase/firestore";
-import { db } from "../firebase";
-import CheckIcon from "@mui/icons-material/Check";
 import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
 import axios from "axios";
-import isEmail from "validator";
+
 export function CreateAccount({ setSucessSingin }) {
   const [user, setUser] = useState({
     email: "",

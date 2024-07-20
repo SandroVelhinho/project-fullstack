@@ -7,6 +7,7 @@ const uri = process.env.uri;
 const productSchema = require("../models/productModel");
 
 const getProducts = async (req, res) => {
+  console.log("api chamada");
   const { category } = req.body;
   try {
     await mongoose.connect(uri);
@@ -16,7 +17,9 @@ const getProducts = async (req, res) => {
     };
     console.log(query);
 
-    res.status(200).send(await productSchema.find(query));
+    const productList = await productSchema.find(query);
+    console.log(productList);
+    res.status(200).send(productList);
   } catch (e) {
     console.log(e);
   } finally {
@@ -31,7 +34,7 @@ const getAProduct = async (req, res) => {
     const productFound = await productSchema.find({ _id: id });
     if (productFound) {
       res.send(productFound[0]);
-    } 
+    }
   } catch (e) {
     res.status(500).send("product not found");
   } finally {

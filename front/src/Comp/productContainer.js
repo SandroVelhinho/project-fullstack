@@ -13,11 +13,16 @@ import { useNavigate } from "react-router-dom";
 import { RemoveProductModal } from "./RemoveProductModal";
 import axios from "axios";
 
-export function ProductContainer({ filtro, setCartIds, cartIds, setRefresh, isAdmin, setIsAdmin }) {
+export function ProductContainer({
+  filtro,
+  setCartIds,
+  cartIds,
+  setRefresh,
+  isAdmin,
+  setIsAdmin,
+}) {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-
-  
 
   useEffect(() => {
     const isAdmin = async () => {
@@ -30,6 +35,7 @@ export function ProductContainer({ filtro, setCartIds, cartIds, setRefresh, isAd
           "http://localhost:3001/user/isadmin",
           { token: localStorageToken }
         );
+
         if (response) {
           console.log(response.data);
           setIsAdmin(response.data);

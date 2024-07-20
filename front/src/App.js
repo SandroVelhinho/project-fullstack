@@ -2,7 +2,7 @@ import { CreateAccount } from "./Comp/CreateAccount";
 import { Login } from "./Comp/Login";
 import { Header } from "./Comp/headerComp";
 import "./App.css";
-
+import { CreateProduct } from "./Comp/CreateProductComp";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HomeComp } from "./homeComp";
@@ -11,7 +11,6 @@ import { ProductCheckout } from "./Comp/ProductCheckout";
 import { FinalComp } from "./Comp/FinalComp";
 import { UpdateUserDetails } from "./Comp/UpdateUSerDetails";
 import { CartComp } from "./Comp/CartComp";
-
 
 function App() {
   const [firebaseName, setFirebaseName] = useState("");
@@ -52,6 +51,7 @@ function App() {
             />
           }
         />
+
         <Route
           path="/create-account"
           element={<CreateAccount setSucessSingin={setSucessSingin} />}
@@ -80,6 +80,8 @@ function App() {
           }
         />
         <Route path="/checkout/:id" element={<ProductCheckout />} />
+        <Route path="/addproduct" element={<CreateProduct />} />
+
         <Route
           path="/update-user-details"
           element={

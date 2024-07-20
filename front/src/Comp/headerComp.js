@@ -83,7 +83,9 @@ export function Header({
                   <Button
                     variant="text"
                     style={{ color: "white" }}
-                    onClick={() => {}}
+                    onClick={() => {
+                      navigate("/addproduct");
+                    }}
                   >
                     Add-Product
                   </Button>
