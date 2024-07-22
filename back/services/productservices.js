@@ -18,7 +18,7 @@ const getProducts = async (req, res) => {
     console.log(query);
 
     const productList = await productSchema.find(query);
-    console.log(productList);
+
     res.status(200).send(productList);
   } catch (e) {
     console.log(e);

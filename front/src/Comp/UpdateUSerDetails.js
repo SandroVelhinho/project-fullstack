@@ -1,6 +1,5 @@
 import { db } from "../firebase";
-import { useParams } from "react-router-dom";
-import { products } from "../products";
+
 import {
   Grid,
   Box,
@@ -24,7 +23,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-
+import axios from "axios";
 export function UpdateUserDetails({
   firebaseName,
   firebaseLname,
@@ -33,7 +32,48 @@ export function UpdateUserDetails({
 }) {
   const [name, setName] = useState(firebaseName);
   const [lname, setLname] = useState(firebaseLname);
+  const [userDetails, setUserDetails] = useState(false);
   const navigate = useNavigate();
+
+  const getUserInfo = async (a) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/user/getuserinfo",
+        a
+      );
+
+      if (response) {
+        return response.data;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    const isAdmin = async () => {
+      try {
+        const localStorageToken = localStorage.getItem(
+          "token423412345763456765"
+        );
+
+        const response = await axios.post(
+          "http://localhost:3001/user/isadmin",
+          { token: localStorageToken }
+        );
+
+        if (response) {
+          console.log(response.data);
+          const userInfo = await getUserInfo(response.data);
+          setUserDetails(userInfo);
+          console.log("userdetails",userDetails);
+        }
+      } catch (e) {
+        console.log("front end cathed : ", e);
+      }
+    };
+    isAdmin();
+  }, []);
 
   const findUserByName = async () => {
     try {

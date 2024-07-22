@@ -8,6 +8,7 @@ const jsonwebtoken = require("jsonwebtoken");
 
 const UserSchema = require("../models/userModel");
 const { isEmail } = require("validator");
+const userModel = require("../models/userModel");
 
 const validateRequestBodyMiddleware = (req, res, next) => {
   //TODO - melhorar e adicionar validação do resto do usuario
@@ -117,6 +118,24 @@ const login = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  const { userEmail } = req.body;
+  console.log("get user");
+  try {
+    await mongoose.connect(uri);
+    const userFound = await UserSchema.find({ email: userEmail });
+    if (userFound) {
+      console.log(userFound);
+      res.send(userFound[0]);
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e.message);
+  } finally {
+    await mongoose.connection.close();
+  }
+};
+
 const updateUser = async (req, res) => {
   const { currentUser, newUser } = req.body;
   //TODO - criar validação de newUser, antes de fazer o findOne and update
@@ -136,17 +155,20 @@ const updateUser = async (req, res) => {
 
 const adminVerification = async (req, res) => {
   const { token } = req.body;
-
+  let object = {};
   try {
     const decodeToken = jsonwebtoken.verify(token, jwtpass);
     console.log(decodeToken);
     if (decodeToken) {
+      object.decodedtoken = decodeToken;
       for (let permission of decodeToken.userPermissions) {
         if (permission === "ADMIN") {
-          return res.send(true);
+          object.bollean = true;
+          return res.send(object);
         }
       }
-      return res.send(false);
+      object.bollean = false;
+      return res.send(object);
     }
   } catch (e) {
     res.status(500).send(e.message);
@@ -159,4 +181,5 @@ module.exports = {
   validateRequestBodyMiddleware,
   login,
   adminVerification,
+  getUser,
 };

@@ -38,7 +38,7 @@ export function ProductContainer({
 
         if (response) {
           console.log(response.data);
-          setIsAdmin(response.data);
+          setIsAdmin(response.data.bollean);
         }
       } catch (e) {
         console.log("front end cathed : ", e);
