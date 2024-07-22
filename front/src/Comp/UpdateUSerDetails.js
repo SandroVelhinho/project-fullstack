@@ -1,29 +1,17 @@
-import { db } from "../firebase";
-
 import {
-  Grid,
-  Box,
-  Container,
   Divider,
-  Chip,
   Paper,
   Stack,
   Button,
-  IconButton,
   TextField,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+
 import axios from "axios";
+
 export function UpdateUserDetails({
   firebaseName,
   firebaseLname,
@@ -34,6 +22,8 @@ export function UpdateUserDetails({
   const [lname, setLname] = useState(firebaseLname);
   const [userDetails, setUserDetails] = useState(false);
   const navigate = useNavigate();
+  const [newInfo, setNewInfo] = useState({});
+  const [bollean, setBollean] = useState(false);
 
   const getUserInfo = async (a) => {
     try {
@@ -43,6 +33,7 @@ export function UpdateUserDetails({
       );
 
       if (response) {
+        console.log("response.data:", response.data);
         return response.data;
       }
     } catch (e) {
@@ -66,7 +57,8 @@ export function UpdateUserDetails({
           console.log(response.data);
           const userInfo = await getUserInfo(response.data);
           setUserDetails(userInfo);
-          console.log("userdetails",userDetails);
+          console.log("userdetails", userDetails);
+          setBollean(true);
         }
       } catch (e) {
         console.log("front end cathed : ", e);
@@ -75,82 +67,121 @@ export function UpdateUserDetails({
     isAdmin();
   }, []);
 
-  const findUserByName = async () => {
+  const onSubmit = async () => {
     try {
-      const q = query(
-        collection(db, "users"),
-        where("lname", "==", firebaseLname)
-      );
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach(async (docSnapshot) => {
-          const reference = doc(db, "users", docSnapshot.id);
-          await updateDoc(reference, {
-            name: name,
-            lname: lname,
-          });
-          console.log("User details updated successfully!");
-          setFirebaseName(name);
-          setFirebaseLname(lname);
-          navigate(-1);
-        });
-      } else {
-        console.error("User not found");
-      }
-    } catch (error) {
-      console.error("Error updating user details:", error);
+      setBollean(false);
+      const response = await axios.post("http://localhost:3001/user/update", {
+        currentUser: userDetails,
+        newUser: newInfo,
+      });
+      console.log(response.data);
+      setUserDetails(response.data);
+      setFirebaseName(response.data.name);
+      setFirebaseLname(response.data.lastname);
+      setBollean(true);
+    } catch (e) {
+      setBollean(true);
+      console.log(e);
     }
   };
 
   return (
-    <div style={{ marginTop: "4%" }}>
-      <h2 style={{ marginTop: "5%", textAlign: "center" }}>User-Details</h2>
-      <Divider />
-      <form style={{ marginTop: "1%" }}>
-        <Paper elevation={10} style={{ marginLeft: "10%", marginRight: "10%" }}>
-          <TextField
-            id="filled-basic"
-            label={firebaseName}
-            variant="filled"
-            style={{
-              marginBottom: "1%",
-              marginTop: "1%",
-              marginLeft: "4%",
-              width: "50%",
-            }}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+    <>
+      {bollean ? (
+        <div style={{ marginTop: "4%" }}>
+          <h2 style={{ marginTop: "5%", textAlign: "center" }}>User-Details</h2>
           <Divider />
-          <TextField
-            id="filled-basic"
-            label={firebaseLname}
-            variant="filled"
-            style={{
-              marginBottom: "1%",
-              marginTop: "1%",
-              marginLeft: "4%",
-              width: "50%",
-            }}
-            value={lname}
-            onChange={(e) => setLname(e.target.value)}
+          <form style={{ marginTop: "1%" }}>
+            <Paper
+              elevation={10}
+              style={{ marginLeft: "10%", marginRight: "10%" }}
+            >
+              <div>
+                <Stack
+                  direction="row"
+                  divider={<Divider orientation="vertical" flexItem />}
+                  spacing={2}
+                >
+                  <TextField
+                    id="filled-basic"
+                    label={userDetails.name}
+                    variant="filled"
+                    onChange={(e) =>
+                      setNewInfo({ ...newInfo, name: e.target.value })
+                    }
+                    style={{
+                      marginBottom: "1%",
+                      marginTop: "1%",
+                      marginLeft: "4%",
+                      width: "50%",
+                    }}
+                  />
+                  <TextField
+                    id="filled-basic"
+                    label={userDetails.lastname}
+                    variant="filled"
+                    style={{
+                      marginBottom: "1%",
+                      marginTop: "1%",
+                      marginRight: "4%",
+                      width: "50%",
+                    }}
+                    onChange={(e) =>
+                      setNewInfo({ ...newInfo, lastname: e.target.value })
+                    }
+                  />
+                </Stack>
+              </div>
+              <Divider />
+              <div>
+                <Stack
+                  direction="row"
+                  divider={<Divider orientation="vertical" flexItem />}
+                  spacing={2}
+                >
+                  <TextField
+                    id="filled-basic"
+                    label={userDetails.age}
+                    variant="filled"
+                    onChange={(e) =>
+                      setNewInfo({
+                        ...newInfo,
+                        age: e.target.value,
+                      })
+                    }
+                    style={{
+                      marginBottom: "1%",
+                      marginTop: "1%",
+                      marginLeft: "4%",
+                      width: "50%",
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={onSubmit}
+                    style={{
+                      marginBottom: "1%",
+                      marginTop: "1%",
+                      marginRight: "4%",
+                      width: "50%",
+                    }}
+                  >
+                    Update-User
+                  </Button>
+                </Stack>
+              </div>
+              <Divider />
+            </Paper>
+          </form>
+        </div>
+      ) : (
+        <Backdrop open={true}>
+          <CircularProgress
+            color="inherit"
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           />
-          <Divider />
-          <Button
-            variant="contained"
-            onClick={findUserByName}
-            style={{
-              marginBottom: "1%",
-              marginTop: "1%",
-              marginLeft: "4%",
-              width: "50%",
-            }}
-          >
-            Update Details
-          </Button>
-        </Paper>
-      </form>
-    </div>
+        </Backdrop>
+      )}
+    </>
   );
 }

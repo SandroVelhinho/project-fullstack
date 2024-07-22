@@ -7,6 +7,7 @@ const {
   login,
   adminVerification,
   getUser,
+  updateUser,
 } = require("../services/userservices");
 
 userRouter.post(
@@ -28,6 +29,10 @@ userRouter.post(
     }
   }
 );
+
+userRouter.post("/update", async (req, res) => {
+  await updateUser(req, res).catch((e) => console.log(e));
+});
 
 userRouter.post("/login", async (req, res) => {
   try {

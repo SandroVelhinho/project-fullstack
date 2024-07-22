@@ -119,13 +119,12 @@ const login = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { userEmail } = req.body;
-  console.log("get user");
+  const { userEmail } = req.body.decodedtoken;
+
   try {
     await mongoose.connect(uri);
     const userFound = await UserSchema.find({ email: userEmail });
     if (userFound) {
-      console.log(userFound);
       res.send(userFound[0]);
     }
   } catch (e) {
@@ -143,10 +142,16 @@ const updateUser = async (req, res) => {
     await mongoose.connect(uri);
 
     const user = await UserSchema.findOneAndUpdate(
-      { email: currentUser.email },
-      newUser
+      { _id: currentUser._id },
+      newUser,
+      { new: true }
     );
+
+    if (user) {
+      res.send(user);
+    }
   } catch (e) {
+    res.status(500);
     console.log(e);
   } finally {
     mongoose.connection.close();
@@ -182,4 +187,5 @@ module.exports = {
   login,
   adminVerification,
   getUser,
+  updateUser,
 };
