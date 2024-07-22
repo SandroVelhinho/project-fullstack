@@ -139,7 +139,7 @@ export function CreateProduct() {
                 style={{
                   marginBottom: "1%",
                   marginTop: "1%",
-                  marginLeft: "4%",
+                  marginRight: "4%",
                   width: "50%",
                 }}
               >
