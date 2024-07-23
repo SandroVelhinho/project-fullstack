@@ -1,54 +1,48 @@
-import { useParams } from "react-router-dom";
-import { products } from "../products";
-import {
-  Grid,
-  Box,
-  Container,
-  Divider,
-  Chip,
-  Paper,
-  Stack,
-  Button,
-  IconButton,
-  Alert,
-} from "@mui/material";
+import { Container, Divider, Paper, Stack, Button, Alert } from "@mui/material";
 
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { CardComp } from "./CardComp";
-import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
+import axios from "axios";
 
 export function CartComp({ cartIds }) {
   const [total, setTotal] = useState(0);
+  const [cartProduct, setCartProduct] = useState([]);
 
   useEffect(() => {
-    let totalPrice = 0;
-    cartIds.forEach((cartId) => {
-      const prodFound = products.find((prod) => prod.id === cartId);
-      if (prodFound) {
-        totalPrice += prodFound.preço;
+    const getProductsApi = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/product/getbasedarray",
+          { array: cartIds }
+        );
+        console.log(response);
+
+        if (Array.isArray(response.data)) {
+          setCartProduct(response.data);
+        } else {
+          console.log("response.data is not an array: ", response.data);
+        }
+      } catch (e) {
+        console.log(e);
       }
-    });
-    setTotal(totalPrice);
-  }, [cartIds]);
+    };
+    getProductsApi();
+  }, []);
 
   return (
     <>
       <h2 style={{ marginTop: "5%", textAlign: "center" }}>Cart-page</h2>
       <Container maxWidth="md">
         <Stack spacing={4}>
-          {cartIds.length > 0 ? (
-            cartIds.map((cartId) => {
-              const prod = products.find((prod) => prod.id === cartId);
-              if (!prod) return null;
+          {cartProduct.length > 0 ? (
+            cartProduct.map((prod) => {
               return (
                 <Paper
-                  key={prod.id}
+                  key={prod._id}
                   elevation={10}
                   style={{ height: "100%", position: "relative" }}
                 >
                   <Stack direction={"row"} alignItems="center" spacing={2}>
-                    <span>{prod.nome}</span>
+                    <span>{prod.name}</span>
                     <img
                       src={require(`${prod.img}`)}
                       alt="Imagem não encontrada"
@@ -62,7 +56,7 @@ export function CartComp({ cartIds }) {
                     <Divider orientation="vertical" flexItem />
                     <Button
                       onClick={() => {
-                        setTotal((a) => a - prod.preço);
+                        setTotal((a) => a - prod.price);
                       }}
                     >
                       -
@@ -70,7 +64,7 @@ export function CartComp({ cartIds }) {
                     <span>Quantity</span>
                     <Button
                       onClick={() => {
-                        setTotal((a) => a + prod.preço);
+                        setTotal((a) => a + prod.price);
                       }}
                     >
                       +

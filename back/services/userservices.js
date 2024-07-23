@@ -11,7 +11,7 @@ const { isEmail } = require("validator");
 const userModel = require("../models/userModel");
 
 const validateRequestBodyMiddleware = (req, res, next) => {
-  //TODO - melhorar e adicionar validação do resto do usuario
+  
   const { body } = req;
   const errors = [];
   const passwordRegex =
@@ -137,7 +137,6 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { currentUser, newUser } = req.body;
-  //TODO - criar validação de newUser, antes de fazer o findOne and update
   try {
     await mongoose.connect(uri);
 

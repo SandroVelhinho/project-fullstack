@@ -26,6 +26,26 @@ const getProducts = async (req, res) => {
     await mongoose.connection.close();
   }
 };
+const getArrayProducts = async (req, res) => {
+  const { array } = req.body;
+  const objectIdArray = array.map((id) => new mongoose.Types.ObjectId(id));
+  console.log(objectIdArray);
+  try {
+    await mongoose.connect(uri);
+    const objectArray = [];
+    for (let i = 0; i < array.length; i++) {
+      const product = await productSchema.find({ _id: array[i] });
+      objectArray.push(product[0]);
+    }
+
+    res.status(200).send(objectArray);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    await mongoose.connection.close();
+  }
+};
+
 const getAProduct = async (req, res) => {
   const { id } = req.body;
   try {
@@ -68,7 +88,7 @@ const AddNewProduct = async (req, res) => {
   const { body } = req;
   try {
     await mongoose.connect(uri);
-    //NOTE - voltar para verificar o response do api
+
     const result = jwt.verify(body.token, jwtpass);
     console.log(result);
     let permissions = false;
@@ -98,4 +118,10 @@ const AddNewProduct = async (req, res) => {
   }
 };
 
-module.exports = { getAProduct, AddNewProduct, getProducts, removeProduct };
+module.exports = {
+  getArrayProducts,
+  getAProduct,
+  AddNewProduct,
+  getProducts,
+  removeProduct,
+};

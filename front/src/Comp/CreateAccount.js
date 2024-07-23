@@ -30,7 +30,6 @@ export function CreateAccount({ setSucessSingin }) {
 
   const [loading, setLoading] = useState(false);
 
-  //TODO - substituir todos estes tratamentos de error por apenas um ou dois, e la em baixo tbm
   if (errorStringArray.length > 0) {
     setTimeout(() => {
       setError(true);

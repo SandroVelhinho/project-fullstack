@@ -7,10 +7,14 @@ const {
   getProducts,
   removeProduct,
   getAProduct,
+  getArrayProducts,
 } = require("../services/productservices");
 
 productRouter.post("/", async (req, res) => {
   await AddNewProduct(req, res).catch((e) => console.log(e));
+});
+productRouter.post("/getbasedarray", async (req, res) => {
+  await getArrayProducts(req, res).catch((e) => console.log(e));
 });
 
 productRouter.post("/add", async (req, res) => {
