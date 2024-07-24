@@ -6,6 +6,7 @@ import axios from "axios";
 export function CartComp({ cartIds }) {
   const [total, setTotal] = useState(0);
   const [cartProduct, setCartProduct] = useState([]);
+  const [amount, setAmount] = useState({});
 
   useEffect(() => {
     const getProductsApi = async () => {
@@ -17,6 +18,8 @@ export function CartComp({ cartIds }) {
         console.log(response);
 
         if (Array.isArray(response.data)) {
+          let amountArray = response.data.map((obj) => ({ ...obj, amount: 1 }));
+          setAmount(amountArray);
           setCartProduct(response.data);
         } else {
           console.log("response.data is not an array: ", response.data);
@@ -42,7 +45,7 @@ export function CartComp({ cartIds }) {
                   style={{ height: "100%", position: "relative" }}
                 >
                   <Stack direction={"row"} alignItems="center" spacing={2}>
-                    <span>{prod.name}</span>
+                    <span style={{ marginLeft: "2%" }}>{prod.name}</span>
                     <img
                       src={require(`${prod.img}`)}
                       alt="Imagem não encontrada"
@@ -69,6 +72,9 @@ export function CartComp({ cartIds }) {
                     >
                       +
                     </Button>
+                    <Divider orientation="vertical" flexItem />
+         
+                    <span style={{ marginLeft: "2%" }}></span>
                   </Stack>
                 </Paper>
               );

@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "User must have a name"],
     min: [18, "User must have at least 18 years old"],
   },
+  resetpasswordtoken: String,
 });
 
 UserSchema.methods = {
@@ -35,12 +36,29 @@ UserSchema.methods = {
       throw new Error("password does not match");
     }
   },
+  generateResetPasswordToken: function () {
+    this.resetpasswordtoken = Math.round(Math.random() * 100000);
+  },
+  resetPassword: async function (token, password) {
+    const result = await bcrypt.compare(token, this.resetpasswordtoken);
+    if (!result) {
+      throw new Error("Token does not match");
+    }
+
+    this.password = password;
+    this.resetpasswordtoken = null;
+  },
 };
 UserSchema.pre("save", function (next) {
   if (this.password && this.isModified("password")) {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(this.password, salt);
     this.password = hash;
+  }
+  if (this.resetpasswordtoken) {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(this.resetpasswordtoken, salt);
+    this.resetpasswordtoken = hash;
   }
   next();
 });

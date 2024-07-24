@@ -11,6 +11,7 @@ import { ProductCheckout } from "./Comp/ProductCheckout";
 import { FinalComp } from "./Comp/FinalComp";
 import { UpdateUserDetails } from "./Comp/UpdateUSerDetails";
 import { CartComp } from "./Comp/CartComp";
+import { ResetPasswordComp } from "./Comp/ResetPasswordComp";
 
 function App() {
   const [firebaseName, setFirebaseName] = useState("");
@@ -69,6 +70,7 @@ function App() {
             />
           }
         />
+        <Route path="/resetpassword" element={<ResetPasswordComp />} />
         <Route path="/final/:id" element={<FinalComp />} />
         <Route
           path="/products/:id"

@@ -85,6 +85,22 @@ export function UpdateUserDetails({
     }
   };
 
+  const forgotPassword = async () => {
+    try {
+      setBollean(false);
+      const response = await axios.post(
+        "http://localhost:3001/user/forgotpassword",
+        {
+          email: userDetails.email,
+        }
+      );
+      console.log(response.data);
+      navigate("/resetpassword");
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <>
       {bollean ? (
@@ -171,6 +187,22 @@ export function UpdateUserDetails({
                 </Stack>
               </div>
               <Divider />
+              <div
+                style={{
+                  display: "flex",
+                  alignContent: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Stack>
+                  <span>
+                    If you want to change password click{" "}
+                    <Button variant="outlined" onClick={forgotPassword}>
+                      here
+                    </Button>
+                  </span>
+                </Stack>
+              </div>
             </Paper>
           </form>
         </div>

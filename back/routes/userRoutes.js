@@ -9,6 +9,10 @@ const {
   getUser,
   updateUser,
 } = require("../services/userservices");
+const {
+  forgotPassword,
+  resetPassword,
+} = require("../services/forgotcredencials_service");
 
 userRouter.post(
   "/signin",
@@ -29,6 +33,12 @@ userRouter.post(
     }
   }
 );
+userRouter.post("/forgotpassword", async (req, res) => {
+  await forgotPassword(req, res).catch((e) => console.log(e));
+});
+userRouter.post("/resetpassword", async (req, res) => {
+  await resetPassword(req, res).catch((e) => console.log(e));
+});
 
 userRouter.post("/update", async (req, res) => {
   await updateUser(req, res).catch((e) => console.log(e));
