@@ -30,6 +30,9 @@ export function ProductContainer({
         const localStorageToken = localStorage.getItem(
           "token423412345763456765"
         );
+        if (!localStorageToken) {
+          setIsAdmin(false);
+        }
 
         const response = await axios.post(
           "http://localhost:3001/user/isadmin",
